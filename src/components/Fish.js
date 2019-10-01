@@ -20,6 +20,7 @@ class Fish extends React.Component {
 
   render() {
     const { name, image, desc, price, status } = this.props.details;
+    console.log(typeof price);
     const isAvailable = status === 'available';
     return (
       <li className="menu-fish">
