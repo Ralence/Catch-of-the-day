@@ -36,6 +36,31 @@ class App extends React.Component {
   addFish = fish => {
     const fishes = { ...this.state.fishes };
     fishes[`fish${Date.now()}`] = fish;
+    this.setState(() => ({ fishes }));
+  };
+
+  updateFish = (id, updatedFish) => {
+    this.setState(prevState => ({
+      ...prevState,
+      fishes: {
+        ...prevState.fishes,
+        [id]: updatedFish,
+      },
+    }));
+  };
+
+  deleteFish = fishID => {
+    const fishes = { ...this.state.fishes };
+    // commented out the solution because it doesn't work well with firebase
+    // to be deleted in firebase we need to set the fish to 'null'
+    // const updatedFishes = {};
+    // Object.keys(fishes)
+    //   .filter(key => key !== fishID)
+    //   .forEach(fish => (updatedFishes[fish] = fishes[fish]));
+    // this.setState(() => ({
+    //   fishes: updatedFishes,
+    // }));
+    fishes[fishID] = null;
     this.setState({ fishes });
   };
 
@@ -46,7 +71,24 @@ class App extends React.Component {
   addToOrder = key => {
     const order = { ...this.state.order };
     order[key] = order[key] + 1 || 1;
-    this.setState({ order });
+    this.setState(() => ({ order }));
+  };
+
+  removeFromOrder = fishId => {
+    const order = {
+      ...this.state.order,
+      // [fishId]: this.state.order[fishId] - 1,
+    };
+
+    // if (order[fishId] < 1) {
+    //   order[fishId] = null;
+    delete order[fishId];
+    // }
+
+    this.setState(prevState => ({
+      ...prevState,
+      order,
+    }));
   };
 
   render() {
@@ -65,10 +107,17 @@ class App extends React.Component {
             ))}
           </ul>
         </div>
-        <Order fishes={this.state.fishes} order={this.state.order} />
+        <Order
+          fishes={this.state.fishes}
+          order={this.state.order}
+          removeFromOrder={this.removeFromOrder}
+        />
         <Inventory
           addFish={this.addFish}
+          updateFish={this.updateFish}
+          deleteFish={this.deleteFish}
           loadSampleFishes={this.loadSampleFishes}
+          fishes={this.state.fishes}
         />
       </div>
     );
